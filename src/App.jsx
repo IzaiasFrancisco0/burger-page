@@ -7,19 +7,20 @@ import Burguer from './components/Burguer.jsx';
 import Bebidas from './components/Bebidas.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function App() {
     const [openCart, setOpenCart] = useState(false);
     const [burguers, setBurguers] = useState([]);
-    const [bebidas, setBebidas] = useState([])
+    const [bebidas, setBebidas] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [cartItems, setCartItems] = useState([]);
 
     useEffect(() => {
         const consumirApi = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/burguer');
+                const response = await axios.get(`${API_URL}/burguer`);
                 setBurguers(response.data);
-                console.log("Dados da API recebidos no App:", response.data);
             } catch (err) {
                 console.log("deu erro ao consumir api no App", err);
             }
@@ -31,9 +32,8 @@ function App() {
     useEffect(() => {
         const consumirApiBebidas = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/bebidas');
+                const response = await axios.get(`${API_URL}/bebidas`);
                 setBebidas(response.data);
-                console.log("Dados da API recebidos no App:", response.data);
             } catch (err) {
                 console.log("deu erro ao consumir api no App", err);
             }
@@ -43,19 +43,20 @@ function App() {
 
     const handleSearch = (term) => {
         setSearchTerm(term);
-        console.log("Termo de pesquisa:", term);
     };
 
-    const filteredBurguers = burguers.filter(burguer =>
-        burguer.nome.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const filteredBebidas = bebidas.filter(bebida =>
-        bebida.nome.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+   const filteredBurguers = Array.isArray(burguers)
+  ? burguers.filter(burguer =>
+      burguer.nome.toLowerCase().includes(searchTerm.toLowerCase())
     )
+  : [];
 
-    console.log("Lista filtrada no App:", filteredBurguers);
-    console.log(filteredBebidas)
+   const filteredBebidas = Array.isArray(bebidas)
+  ? bebidas.filter(bebida =>
+      bebida.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  : [];
+
 
     const addToCart = (item) => {
         setCartItems(prev => {
